@@ -12,8 +12,7 @@ RUN apk update && \
     apk del zip 
 
 RUN mkdir -p /etc/consul-template /etc/haproxy
-ADD consul-template.cfg /etc/consul-template/consul-template.cfg
-ADD haproxy.cfg.tpl /etc/consul-template/haproxy.cfg.tpl
-ADD haproxy.sh /haproxy.sh
+COPY haproxy.cfg.tpl /etc/consul-template/haproxy.cfg.tpl
+COPY haproxy.sh /haproxy.sh
 
-CMD /usr/local/bin/consul-template --consul-addr ${CONSUL_ADDRESS} --config /etc/consul-template/consul-template.cfg
+CMD /usr/local/bin/consul-template --consul-addr ${CONSUL_ADDRESS} -template="/etc/consul-template/haproxy.cfg.tpl:/etc/haproxy/haproxy.cfg" -exec /haproxy.sh -exec-reload-signal SIGHUP
